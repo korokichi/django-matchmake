@@ -5,6 +5,7 @@ from snippets.views import top
 
 urlpatterns = [
     path('', top, name='top'),
+    path('makematch/', include('makematch.urls')),
     path('snippets/', include('snippets.urls')),
     path("accounts/", include("accounts.urls")),
     path('admin/', admin.site.urls),

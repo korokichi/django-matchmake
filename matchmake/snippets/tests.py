@@ -15,7 +15,7 @@ class TopPageTest(TestCase):
 
     def test_top_page_uses_expected_template(self):
         response = self.client.get("/")
-        self.assertTemplateUsed(response, "snippets/top.html")
+        self.assertTemplateUsed(response, "snippets/top.html") # type:ignore
 
 
 class TopPageRenderSnippetsTest(TestCase):
@@ -82,7 +82,7 @@ class SnippetDetailTest(TestCase):
 
     def test_should_use_expected_template(self):
         response = self.client.get("/snippets/%s/" % self.snippet.id)
-        self.assertTemplateUsed(response, "snippets/snippet_detail.html")
+        self.assertTemplateUsed(response, "snippets/snippet_detail.html") # type:ignore
 
     def test_top_page_returns_200_and_expected_heading(self):
         response = self.client.get("/snippets/%s/" % self.snippet.id)
