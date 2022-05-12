@@ -6,13 +6,13 @@ from django.http import HttpResponse,HttpResponseForbidden
 from snippets.forms import SnippetForm, CommentForm
 from snippets.models import Snippet, Comment
 
-
+""" 
 def top(request):
     snippets = Snippet.objects.all()
     context = {"snippets": snippets}
     return render(request, "snippets/top.html", context)
 
-
+"""
 @login_required
 def snippet_new(request):
     if request.method == 'POST':

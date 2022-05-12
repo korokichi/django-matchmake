@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load boost %}
+
+{% block main %}
+<h2>{{round.tournament.title}} Round{{ round.round }}</h2>
+
+{% if edit_formset %}
+<form action="" method="post">
+<button type="submit" class="btn btn-primary">ラウンド結果確定</button>
+  {% for form,match in edit_formset|zip:matches %}
+
+<div class="card-group">
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title player-name">{{match.player_A.name}}</h3>
+      <p class="card-text player-name">DROP{{form.player_A_drop}}</p>
+    </div>
+  </div>
+  <div class="card point-board">
+  
+
+
+    <table>
+      <tr>
+        <th></th>
+        <th><h6 class="dash">Table{{match.table}}</h6></th>
+        <th></th>
+      </tr>
+        <tr>
+          <td>
+
+          {{ form.player_A_point }}
+
+
+          </td>
+          <td><h5 class="dash">―</p></td>
+          <td>
+            {{ form.player_B_point }}
+            {% comment %} {{form.player_B_point field}} {% endcomment %}
+          </td>
+        </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+
+
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title player-name">{{match.player_B.name}}</h3>
+      <p class="card-text player-name">DROP{{form.player_B_drop}}</p>
+    </div>
+  </div>
+</div>
+
+    {% for field in form.hidden_fields %}
+                {{ field }}
+            {% endfor %}
+    
+    
+    
+  {% endfor %}
+  {{ edit_formset.management_form }}
+  {% csrf_token %}
+  
+</form>
+{% else %}
+<p>マッチはまだ作成されていません</p>
+{% endif %}
+
+{% endblock %}
+

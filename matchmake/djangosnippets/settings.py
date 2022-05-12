@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'makematch.apps.MakematchConfig',
     'accounts.apps.AccountsConfig',
     'django_bootstrap5',
-    'pygments_renderer',
+    'django_boost',
 ]
 
 MIDDLEWARE = [

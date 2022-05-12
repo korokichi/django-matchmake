@@ -1,0 +1,78 @@
+main {
+    padding: 2rem 0;
+}
+
+.welcome {
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    background-color: #eee;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+/* .snippet-date {
+    margin-bottom: 1rem;
+}
+
+.source-code>.highlight {
+    padding: 1rem;
+    margin-bottom: 1rem;
+} */
+
+.player-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.point-board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto
+}
+
+.point-board div {
+    margin: 2em 5em
+}
+
+/* .point-board input {
+    width: calc(100% / 4);
+} */
+
+
+
+.point-board input {
+
+    border: 0;
+    padding: 5px;
+    font-size: 1.3em;
+    font-family: Arial, sans-serif;
+    color: rgb(0, 0, 0);
+    border: solid 1px #ccc;
+    width: 50px;
+
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto
+}
+
+.point-board table {
+    width: 60%;
+    table-layout: fixed;
+    word-break: break-all;
+    word-wrap: break-all;
+}
+
+.point-board h5,
+.point-board h6 {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
