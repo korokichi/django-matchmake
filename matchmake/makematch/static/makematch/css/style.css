@@ -1,9 +1,10 @@
 main {
     padding: 2rem 0;
+    height: 95%;
 }
 
 .welcome {
-    padding: 3rem 0;
+    padding: 2rem 0;
     margin-bottom: 2rem;
     background-color: #eee;
     align-items: center;
@@ -11,14 +12,31 @@ main {
     flex-direction: column;
 }
 
-/* .snippet-date {
-    margin-bottom: 1rem;
+.tournament-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.source-code>.highlight {
-    padding: 1rem;
-    margin-bottom: 1rem;
+/* .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
 } */
+
+.box {
+    height: 80%;
+    overflow-y: auto;
+    /* 縦方向にスクロール可能にする */
+}
+
+.tournament-title {
+    display: inline;
+}
+
+.save-round {
+    text-align: right;
+}
 
 .player-name {
     display: flex;

@@ -6,6 +6,11 @@ class TournamentForm(forms.ModelForm):
     class Meta:
         model = Tournament
         fields = ('title', 'player_num', 'round')
+        labels={
+           'title':'大会名',
+           'player_num':'参加者数',
+           'round':'ラウンド数',
+        }
 
 class PlayerForm(forms.ModelForm):
     class Meta:
@@ -27,6 +32,7 @@ class MatchForm(forms.ModelForm):
         #     'player_B_point': forms.NumberInput(attrs={'class': 'form-control'})
         #     # cssクラスの追加(titleにtextinputclass, textにeditableクラスが追加されるようになる)
         # }
+
 
 EditMatchFormSet = forms.modelformset_factory(Match,
                                 form=MatchForm,extra=0)

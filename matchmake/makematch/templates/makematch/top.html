@@ -1,33 +1,36 @@
 {% extends "base.html" %}
 
 {% block main %}
+
+
 <div class="welcome">
     <h1 class="title">ようこそTournament作成へ！</h1>
     <p class="subtitle">あなたの大会を開きましょう</p>
     <a class="btn btn-primary" href="{% url 'tournament_new' %}">大会を作成する</a>
 </div>
 
-<h5 class="player-name">Card title</h5>
-
 {% if tournaments %}
-<table class="table">
-    <thead>
-    <tr>
-        <th>主催者</th>
-        <th>投稿日</th>
-        <th>タイトル</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for tournament in tournaments %}
-    <tr>
-        <th>{{ tournament.created_by.username }}</th>
-        <th>{{ tournament.created_at }}</th>
-        <th><a href="{% url 'tournament_detail' tournament.id %}">{{ tournament.title }}</a></th>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+<h5 class="tournament-top">大会一覧</h5>
+<div class="box">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>主催者</th>
+            <th>投稿日</th>
+            <th>タイトル</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for tournament in tournaments %}
+        <tr>
+            <th>{{ tournament.created_by.username }}</th>
+            <th>{{ tournament.created_at }}</th>
+            <th><a href="{% url 'tournament_detail' tournament.id %}">{{ tournament.title }}</a></th>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
 <p>大会はまだ作成されていません</p>
 {% endif %}

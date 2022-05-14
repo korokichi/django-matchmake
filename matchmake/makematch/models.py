@@ -10,8 +10,8 @@ from django.forms import IntegerField
 
 class Tournament(models.Model):
     title = models.CharField('タイトル', max_length=128)
-    player_num = models.IntegerField()
-    round = models.IntegerField()
+    player_num = models.IntegerField(default=8)
+    round = models.IntegerField(default=3)
     current_round = models.IntegerField(default=0)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
                                    verbose_name="投稿者",
@@ -34,7 +34,7 @@ class Player(models.Model):
     drop = models.BooleanField(default=False)
     points = models.IntegerField(default=0)
     omw = models.FloatField(default=0.0)
-    sowp = models.FloatField(default=0.0)        # 勝手累点
+    sowp = models.IntegerField(default=0)        # 勝手累点
     avr_omw = models.FloatField(default=0.0)     # 平均OMW%  
     rnd = models.FloatField(default=random.random()) # 重複回避用乱数
     """ 
@@ -58,8 +58,10 @@ class Round(models.Model):
                                     related_name='tournament_round',
                                     on_delete=models.CASCADE)
     round = models.IntegerField()
-    # 将来的には完了時間を追加する
 
+    save_flag = models.BooleanField(default=False)
+
+        # 将来的には完了時間を追加する
     def __str__(self):
         return f'{self.tournament.created_by.username}_{self.tournament.title}_{self.round}'  
 

@@ -1,3 +1,5 @@
 WIN = 3
 LOSE = 0
 DRAW = 0
+
+BYE_ID = -1

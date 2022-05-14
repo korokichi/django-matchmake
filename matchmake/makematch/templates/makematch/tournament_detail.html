@@ -66,9 +66,17 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">参加人数:{{tournament.player_num}}人</li>
                 <li class="list-group-item">ラウンド数:{{tournament.round}}</li>
+                <li class="list-group-item">
+                  現在ラウンド:
+                  {% if tournament.current_round == 0 %}
+                  未開始
+                  {% else %}
+                  Round{{tournament.current_round}}
+                  {% endif %}
+                  </li>
                 <li class="list-group-item">作成日:{{tournament.created_at}}</li>
             </ul>
-            <a href="{% url 'round_new' tournament.id %}" class="btn btn-primary">新規ラウンド作成</a>
+            
         </div>
     </div>
 
@@ -79,9 +87,20 @@
     role="tabpanel"
     aria-labelledby="contact-tab"
   >
+    {% comment %} Round1の結果が保存されていたらプレイヤーの戦績反映実行可 {% endcomment %}
+    {% if current_round_save_flag %}
+        <a href="{% url 'save_players_score' tournament.id %}" class="btn btn-primary">プレイヤー戦績保存</a>
+    {% endif %}
+
+
   <table class="table">
     <thead>
     <tr>
+    {% comment %} Round2が作成されていたら順位を表示 {% endcomment %}
+    {% comment %} Round1でプレイヤーの戦績反映したら順位は表示されない {% endcomment %}
+    {% if tournament.current_round > 1  %}
+        <th>順位</th>
+    {% endif %}
         <th>参加者名</th>
         <th>勝ち点</th>
         <th>OMW%</th>
@@ -93,11 +112,15 @@
     <tbody>
     {% for player in players %}
         <tr>
+          {% comment %} Round2が作成されていたら順位を表示 {% endcomment %}
+          {% if tournament.current_round > 1  %}
+            <th>{{ forloop.counter }}</th>
+          {% endif %}
             <th>{{ player.name }}</th>
             <th>{{ player.points }}</th>
-            <th>{{ player.omw }}</th>
+            <th>{{ player.omw|floatformat:5  }}</th>
             <th>{{ player.sowp }}</th>
-            <th>{{ player.avr_omw }}</th>
+            <th>{{ player.avr_omw|floatformat:5 }}</th>
             <th>{{ player.drop }}</th>
             <th><a href="{% url 'player_edit' player.id %}">編集</a></th>
             {% comment %} <th><a href="{% url 'tournament_detail' tournament.id %}">{{ tournament.title }}</a></th> {% endcomment %}
@@ -114,6 +137,10 @@
     role="tabpanel"
     aria-labelledby="round-tab"
   >
+{% if current_round_save_flag or tournament.current_round == 0%}
+<a href="{% url 'round_new' tournament.id %}" class="btn btn-primary">新規ラウンド作成</a>
+{% endif %}
+
 {% if rounds %}
 <table class="table">
     <thead>
@@ -125,45 +152,21 @@
     {% for round in rounds %}
     <tr>
         <th>Round{{ round.round }}</th>
+        {% if tournament.current_round == round.round %}
         <th><a href="{% url 'round_detail' round.id %}">編集</a></th> {% comment %} ここをラウンド詳細にする {% endcomment %}
+        {% else %}
+        <th></th>
+        {% endif %}
     </tr>
     {% endfor %}
     </tbody>
 </table>
 {% else %}
-<p>大会はまだ作成されていません</p>
+<p>ラウンドはまだ作成されていません</p>
 {% endif %}
   </div>
 </div>
 
-{% comment %} <p>{{ snippet.description }}</p> {% endcomment %}
 
-{% comment %} 
-<div class="card">
-    <div class="card-body">
-        <h3 class="card-title">コメント一覧</h3>
-
-        {% if comments %}
-        {% for c in comments %}
-        <hr/>
-        <p class="card-text">{{ c.text }}</p>
-        <small class="text-muted">by {{ c.commented_by.username }} さん {{ c.commented_at|date:"DATETIME_FORMAT" }}</small>
-        {% endfor %}
-        {% else %}
-        <p>コメントはありません。</p>
-        {% endif %}
-    </div>
-    {% if user.is_authenticated %}
-    <div class="card-body">
-        <h4 class="card-title">コメントを投稿する</h4>
-        <form method="post" action="{% url 'comment_new' snippet.id %}">
-            {% csrf_token %}
-            {% bootstrap_form comment_form %}
-            {% bootstrap_button button_type="submit" content="コメント" %}
-        </form>
-    </div>
-    {% endif %}
-</div> 
-{% endcomment %}
 {% endblock %}
 

@@ -10,7 +10,7 @@ from django.http import HttpResponse,HttpResponseForbidden
 from makematch.forms import TournamentForm,PlayerForm,EditMatchFormSet
 from makematch.models import Tournament,Player,Round,Match
 
-from makematch.module import new_player_set,new_match_set
+from makematch.module import new_player_set,new_match_set,mem_players_score,set_player_drop
 
 @login_required
 def tournament_top(request):
@@ -66,15 +66,25 @@ def tournament_edit(request, tournament_id):
 @login_required
 def tournament_detail(request, tournament_id):
     tournament = get_object_or_404(Tournament, pk=tournament_id)
-    players = Player.objects.filter(tournament=tournament,dummy=False)
+    
+    player_order = ('drop','-points','-omw','-sowp','-avr_omw')
     # 不戦勝処理用のダミープレイヤーは表示させない
-    rounds = Round.objects.filter(tournament=tournament).all()
-    # comment_form = CommentForm()
+    players = Player.objects.filter(tournament=tournament,dummy=False).order_by(*player_order)
+    
+
+    rounds = Round.objects.filter(tournament=tournament).order_by('-round')
+
+    try:
+        current_round_save_flag = Round.objects.get(tournament=tournament_id,
+                                        round=tournament.current_round).save_flag
+    except:
+        current_round_save_flag = False
 
     return render(request, "makematch/tournament_detail.html", {
         'tournament': tournament,
         'players':players,
         'rounds':rounds,
+        'current_round_save_flag':current_round_save_flag,
     })
 
 @login_required
@@ -103,13 +113,21 @@ def round_new(request, tournament_id):
 
     tournament = get_object_or_404(Tournament, pk=tournament_id)
     
-    # ラウンド数がマックスまで行ってなかったら、新しいラウンドを作る
-    if tournament.current_round < tournament.round:
+    current_round = Round.objects.filter(tournament=tournament_id).count()
 
-        tournament.current_round += 1
+    # ラウンド数がマックスまで行ってなかったら、新しいラウンドを作る
+    if current_round < tournament.round:
+
+        next_round = current_round+1
+        tournament.current_round = next_round
         tournament.save()
-        round = Round.objects.create(tournament=tournament,round=tournament.current_round)
+
+        round = Round.objects.create(tournament=tournament,round=next_round)
         round.save()
+
+        # Round1以外であれば、プレイヤー戦績を更新する
+        if next_round != 1:
+            mem_players_score(tournament)
 
         matches = new_match_set(round,tournament)
         Match.objects.bulk_create(matches)
@@ -121,17 +139,33 @@ def round_new(request, tournament_id):
                                 "新規ラウンドの作成に失敗しました。")
 
     return redirect('tournament_detail', tournament_id=tournament_id)
-        
+
+@login_required
+def save_players_score(request, tournament_id):
+    tournament = get_object_or_404(Tournament, pk=tournament_id)
+    mem_players_score(tournament)
+    messages.add_message(request, messages.SUCCESS,
+                                "プレイヤーの戦績を反映しました")
+    return redirect('tournament_detail', tournament_id=tournament_id)
+
+
 @login_required
 def round_detail(request, round_id):
     round = get_object_or_404(Round, pk=round_id)
     matches = Match.objects.filter(round=round).all()
-    # rounds = Round.objects.filter(tournament=tournament).all()
 
     if request.method == "POST":
-        edit_formset = EditMatchFormSet(request.POST or None, queryset=matches)                        
+        edit_formset = EditMatchFormSet(request.POST or None, 
+                                queryset=matches,
+                                initial=[{'player_A_point': 0,'player_B_point': 0, }]) 
+                                       
         if edit_formset.is_valid():
             edit_formset.save()
+            set_player_drop(matches)
+
+            # 新規ラウンド作成判断用フラグをONに
+            round.save_flag = True
+            round.save()
             messages.add_message(request, messages.SUCCESS,
                                     "対戦結果の更新に成功しました")
         else:

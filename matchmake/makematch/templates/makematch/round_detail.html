@@ -2,18 +2,33 @@
 {% load boost %}
 
 {% block main %}
-<h2>{{round.tournament.title}} Round{{ round.round }}</h2>
 
-{% if edit_formset %}
-<form action="" method="post">
-<button type="submit" class="btn btn-primary">ラウンド結果確定</button>
+
+
+  <h2 class="tournament-title">{{round.tournament.title}} Round{{ round.round }}</h2>
+  <a href="{% url 'tournament_detail' round.tournament.id %}">大会ページに戻る</a></th>
+
+  {% comment %} {% if edit_formset %} {% endcomment %}
+  <form action="" method="post">
+
+  <div class="save-round">
+    <button type="submit" class="btn btn-primary">ラウンド結果保存</button>
+  </div>
+
+<div class="box">
   {% for form,match in edit_formset|zip:matches %}
 
 <div class="card-group">
   <div class="card">
     <div class="card-body">
       <h3 class="card-title player-name">{{match.player_A.name}}</h3>
-      <p class="card-text player-name">DROP{{form.player_A_drop}}</p>
+      <p class="card-text player-name">
+
+        {% if not match.player_A.dummy %}
+            DROP{{form.player_A_drop}}
+        {% endif %}
+      
+      </p>
     </div>
   </div>
   <div class="card point-board">
@@ -22,28 +37,33 @@
 
     <table>
       <tr>
-        <th></th>
-        <th><h6 class="dash">Table{{match.table}}</h6></th>
-        <th></th>
+
+        <th colspan="3" style="text-align:center"><h6 class="dash">Table{{match.table}}</h6></th>
+
       </tr>
         <tr>
-          <td>
+          
+            <td>
+              {{ form.player_A_point }}
+            </td>
+            <td>
+              <h5 class="dash">―</p>
+            </td>
+            <td>
+              {{ form.player_B_point }}
+            </td>
 
-          {{ form.player_A_point }}
+        <tr>
+        {% if not match.walkover_match %}
+          <td></td>
+          <td></td>
+          <td></td>
+          {% else %}
+          <td colspan="3" style="text-align:center">不戦勝</td>
+          {% endif %}
+        </tr>  
+          
 
-
-          </td>
-          <td><h5 class="dash">―</p></td>
-          <td>
-            {{ form.player_B_point }}
-            {% comment %} {{form.player_B_point field}} {% endcomment %}
-          </td>
-        </tr>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
     </table>
 
 
@@ -51,25 +71,33 @@
   <div class="card">
     <div class="card-body">
       <h3 class="card-title player-name">{{match.player_B.name}}</h3>
-      <p class="card-text player-name">DROP{{form.player_B_drop}}</p>
+      <p class="card-text player-name">
+        {% if not match.player_B.dummy %}
+          DROP{{form.player_B_drop}}
+        {% endif %}
+      </p>
     </div>
   </div>
 </div>
 
     {% for field in form.hidden_fields %}
                 {{ field }}
-            {% endfor %}
+    {% endfor %}
     
     
     
   {% endfor %}
+</div>
+
+
+
   {{ edit_formset.management_form }}
   {% csrf_token %}
   
 </form>
-{% else %}
+{% comment %} {% else %}
 <p>マッチはまだ作成されていません</p>
-{% endif %}
+{% endif %} {% endcomment %}
 
 {% endblock %}
 
